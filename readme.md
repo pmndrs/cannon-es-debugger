@@ -1,3 +1,6 @@
+![Demo Image](https://i.imgur.com/2Bf8KfJ.png)
+
+
 This is a debugger for use with [cannon-es](https://github.com/react-spring/cannon-es). It was adapted from the [original cannon.js debugger](https://github.com/schteppe/cannon.js/blob/master/tools/threejs/CannonDebugRenderer.js) written by Stefan Hedman [@schteppe](https://github.com/schteppe).
 
 **Note:** This debugger currently does not work with [use-cannon](https://github.com/react-spring/use-cannon).
