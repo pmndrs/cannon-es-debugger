@@ -21,7 +21,7 @@ const world = new World()
 debug(scene, world.bodies, options)
 ```
 
-New meshes with wireframe textures will be generated from your physics body geometries and added into the scene. One mesh will be created for every shape in the physics body. The position of the meshes will be synched with the Cannon phyics body simulation on every animation frame.
+New meshes with wireframe textures will be generated from your physics body geometries and added into the scene. A mesh will be created for every shape in the physics body. The position of the meshes will be synched with the Cannon physics body simulation on every animation frame.
 
 
 
