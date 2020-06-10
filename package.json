@@ -1,6 +1,6 @@
 {
   "name": "cannon-es-debugger",
-  "version": "0.0.1-alpha.1",
+  "version": "0.0.1-alpha.2",
   "description": "Wireframe debugger for use with cannon-es https://github.com/react-spring/cannon-es",
   "keywords": [
     "debugger",
