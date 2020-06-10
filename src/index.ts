@@ -25,10 +25,13 @@ import type { Body } from 'cannon-es'
 import type { Scene, Color } from 'three'
 
 type ComplexShape = Shape & { geometryId?: number }
+type DebugOptions = {
+  color?: string | number | Color,
+  onInit?: (body: Body, mesh: Mesh, shape: Shape) => void,
+  onUpdate?: (body: Body, mesh: Mesh, shape: Shape) => void,
+}
 
-type WireframeOptions = { color?: string | number | Color }
-
-export default function renderWireframes(scene: Scene, bodies: Body[], options: WireframeOptions = {}) {
+export default function renderWireframes(scene: Scene, bodies: Body[], options: DebugOptions = {}) {
   const _meshes: Mesh[] = []
   const _material = new MeshBasicMaterial({ color: options.color ?? 0x00ff00, wireframe: true })
   const _tempVec0 = new CannonVector3()
@@ -211,17 +214,18 @@ export default function renderWireframes(scene: Scene, bodies: Body[], options: 
     const { geometry } = mesh
 
     return (
-      (geometry instanceof SphereGeometry && shape instanceof Sphere) ||
-      (geometry instanceof BoxGeometry && shape instanceof Box) ||
-      (geometry instanceof PlaneGeometry && shape instanceof Plane) ||
-      (geometry.id === (shape as ComplexShape).geometryId && shape instanceof ConvexPolyhedron) ||
-      (geometry.id === (shape as ComplexShape).geometryId && shape instanceof Trimesh) ||
-      (geometry.id === (shape as ComplexShape).geometryId && shape instanceof Heightfield)
+      (geometry instanceof SphereGeometry && shape.type === Shape.types.SPHERE) ||
+      (geometry instanceof BoxGeometry && shape.type === Shape.types.BOX) ||
+      (geometry instanceof PlaneGeometry && shape.type === Shape.types.PLANE) ||
+      (geometry.id === (shape as ComplexShape).geometryId && shape.type === Shape.types.CONVEXPOLYHEDRON) ||
+      (geometry.id === (shape as ComplexShape).geometryId && shape.type === Shape.types.TRIMESH) ||
+      (geometry.id === (shape as ComplexShape).geometryId && shape.type === Shape.types.HEIGHTFIELD)
     )
   }
 
-  function updateMesh(index: number, shape: Shape | ComplexShape): void {
+  function updateMesh(index: number, shape: Shape | ComplexShape): boolean {
     let mesh = _meshes[index]
+    let didCreateNewMesh = false
 
     if (!typeMatch(mesh, shape)) {
       if (mesh) {
@@ -229,9 +233,11 @@ export default function renderWireframes(scene: Scene, bodies: Body[], options: 
       }
 
       _meshes[index] = mesh = createMesh(shape)
+      didCreateNewMesh = true
     }
 
     scaleMesh(mesh, shape)
+    return didCreateNewMesh
   }
 
   function update(): void {
@@ -244,7 +250,7 @@ export default function renderWireframes(scene: Scene, bodies: Body[], options: 
     for (const body of bodies) {
       for (let i = 0; i !== body.shapes.length; i++) {
         const shape = body.shapes[i]
-        updateMesh(meshIndex, shape)
+        const didCreateNewMesh = updateMesh(meshIndex, shape)
         const mesh = meshes[meshIndex]
 
         if (mesh) {
@@ -253,6 +259,14 @@ export default function renderWireframes(scene: Scene, bodies: Body[], options: 
           body.quaternion.mult(body.shapeOrientations[i], shapeWorldQuaternion)
           mesh.position.copy((shapeWorldPosition as unknown) as ThreeVector3)
           mesh.quaternion.copy((shapeWorldQuaternion as unknown) as ThreeQuaternion)
+
+          if (didCreateNewMesh && options.onInit instanceof Function) {
+            options.onInit(body, mesh, shape)
+          }
+
+          if (!didCreateNewMesh && options.onUpdate instanceof Function) {
+            options.onUpdate(body, mesh, shape)
+          }
         }
 
         meshIndex++

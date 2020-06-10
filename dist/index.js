@@ -148,22 +148,25 @@ function renderWireframes(scene, bodies, options = {}) {
             return false;
         }
         const { geometry } = mesh;
-        return ((geometry instanceof three_1.SphereGeometry && shape instanceof cannon_es_1.Sphere) ||
-            (geometry instanceof three_1.BoxGeometry && shape instanceof cannon_es_1.Box) ||
-            (geometry instanceof three_1.PlaneGeometry && shape instanceof cannon_es_1.Plane) ||
-            (geometry.id === shape.geometryId && shape instanceof cannon_es_1.ConvexPolyhedron) ||
-            (geometry.id === shape.geometryId && shape instanceof cannon_es_1.Trimesh) ||
-            (geometry.id === shape.geometryId && shape instanceof cannon_es_1.Heightfield));
+        return ((geometry instanceof three_1.SphereGeometry && shape.type === cannon_es_1.Shape.types.SPHERE) ||
+            (geometry instanceof three_1.BoxGeometry && shape.type === cannon_es_1.Shape.types.BOX) ||
+            (geometry instanceof three_1.PlaneGeometry && shape.type === cannon_es_1.Shape.types.PLANE) ||
+            (geometry.id === shape.geometryId && shape.type === cannon_es_1.Shape.types.CONVEXPOLYHEDRON) ||
+            (geometry.id === shape.geometryId && shape.type === cannon_es_1.Shape.types.TRIMESH) ||
+            (geometry.id === shape.geometryId && shape.type === cannon_es_1.Shape.types.HEIGHTFIELD));
     }
     function updateMesh(index, shape) {
         let mesh = _meshes[index];
+        let didCreateNewMesh = false;
         if (!typeMatch(mesh, shape)) {
             if (mesh) {
                 scene.remove(mesh);
             }
             _meshes[index] = mesh = createMesh(shape);
+            didCreateNewMesh = true;
         }
         scaleMesh(mesh, shape);
+        return didCreateNewMesh;
     }
     function update() {
         const meshes = _meshes;
@@ -173,7 +176,7 @@ function renderWireframes(scene, bodies, options = {}) {
         for (const body of bodies) {
             for (let i = 0; i !== body.shapes.length; i++) {
                 const shape = body.shapes[i];
-                updateMesh(meshIndex, shape);
+                const didCreateNewMesh = updateMesh(meshIndex, shape);
                 const mesh = meshes[meshIndex];
                 if (mesh) {
                     body.quaternion.vmult(body.shapeOffsets[i], shapeWorldPosition);
@@ -181,6 +184,12 @@ function renderWireframes(scene, bodies, options = {}) {
                     body.quaternion.mult(body.shapeOrientations[i], shapeWorldQuaternion);
                     mesh.position.copy(shapeWorldPosition);
                     mesh.quaternion.copy(shapeWorldQuaternion);
+                    if (didCreateNewMesh && options.onInit instanceof Function) {
+                        options.onInit(body, mesh, shape);
+                    }
+                    if (!didCreateNewMesh && options.onUpdate instanceof Function) {
+                        options.onUpdate(body, mesh, shape);
+                    }
                 }
                 meshIndex++;
             }

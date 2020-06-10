@@ -15,20 +15,32 @@ import debug from 'cannon-es-debugger'
 
 const scene = new Scene
 const world = new World
-debug(scene, world.bodies)
-```
-
-New meshes with wireframe textures will be generated from your physics body geometries and added into the scene. The position of the meshes will be synched with the Cannon phyics body simulation on every animation frame.
-
-
-
-### Options
-
-The available properties of the debugger `options` object are listed below.
-
-```js
 debug(scene, world.bodies, options)
 ```
 
-* **`color`** - accepts a [Three Color](https://threejs.org/docs/#api/en/math/Color) constructor argument, defaults to `0x00ff00`
+New meshes with wireframe textures will be generated from your physics body geometries and added into the scene. One mesh will be created for every shape in the physics body. The position of the meshes will be synched with the Cannon phyics body simulation on every animation frame.
 
+
+
+### API
+
+The available properties of the `options` object are listed below.
+
+```typescript
+import type { Scene, Color } from 'three'
+import type { Body } from 'cannon-es'
+
+type DebugOptions = {
+  color?: string | number | Color,
+  onInit?: (body: Body, mesh: Mesh, shape: Shape) => void,
+  onUpdate?: (body: Body, mesh: Mesh, shape: Shape) => void,
+}
+
+export default function renderWireframes (scene: Scene, bodies: Body[], options: DebugOptions) {}
+```
+
+* **`color`** - a [Three Color](https://threejs.org/docs/#api/en/math/Color) argument, defaults to `0x00ff00`
+
+* **`onInit`** - callback function that runs once, right after a new wireframe mesh is added
+
+* **`onUpdate`** - callback function that runs on every subsequent animation frame
