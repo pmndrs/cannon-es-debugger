@@ -3,9 +3,10 @@ This is a debugger for use with [cannon-es](https://github.com/react-spring/cann
 **Note:** This debugger currently does not work with [use-cannon](https://github.com/react-spring/use-cannon).
 
 
+
 ### Usage
 
-Give `cannon-es-debugger` references to Three's scene object and Cannon's physics bodies. New meshes with wireframe textures will be generated from your physics body geometries and added into the scene. The position of the meshes will be synched with the Cannon phyics body simulation on every animation frame.
+Give `cannon-es-debugger` references to your Three scene object and Cannon physics bodies:
 
 ```js
 import { Scene } from 'three'
@@ -17,6 +18,9 @@ const world = new World
 debug(scene, world.bodies)
 ```
 
+New meshes with wireframe textures will be generated from your physics body geometries and added into the scene. The position of the meshes will be synched with the Cannon phyics body simulation on every animation frame.
+
+
 
 ### Options
 
@@ -27,3 +31,4 @@ debug(scene, world.bodies, options)
 ```
 
 * **`color`** - accepts a [Three Color](https://threejs.org/docs/#api/en/math/Color) constructor argument, defaults to `0x00ff00`
+
