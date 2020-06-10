@@ -16,8 +16,8 @@ import { Scene } from 'three'
 import { World } from 'cannon-es'
 import debug from 'cannon-es-debugger'
 
-const scene = new Scene
-const world = new World
+const scene = new Scene()
+const world = new World()
 debug(scene, world.bodies, options)
 ```
 
