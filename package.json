@@ -1,0 +1,48 @@
+{
+  "name": "cannon-es-debugger",
+  "version": "0.0.1",
+  "description": "Wireframe debugger for use with cannon-es https://github.com/react-spring/cannon-es",
+  "keywords": [
+    "debugger",
+    "cannon",
+    "three",
+    "react",
+    "react-three-fiber"
+  ],
+  "author": "Stefan Hedman <schteppe@gmail.com> (http://steffe.se)",
+  "contributors": [
+    "Cody Persinger <codypersinger@gmail.com> (https://github.com/codynova)"
+  ],
+  "license": "MIT",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
+  "scripts": {
+    "prebuild": "rimraf dist && npm run typegen",
+    "prepare": "npm run typegen",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false --strict",
+    "typegen": "tsc",
+    "test": "echo tests are missing"
+  },
+  "prettier": {
+    "semi": false,
+    "trailingComma": "es5",
+    "singleQuote": true,
+    "jsxBracketSameLine": true,
+    "tabWidth": 2,
+    "printWidth": 110
+  },
+  "dependencies": {
+    "cannon-es": "^0.10.0"
+  },
+  "peerDependencies": {
+    "typescript": ">=3.8"
+  },
+  "devDependencies": {
+    "prettier": "^2.0.5",
+    "pretty-quick": "^2.0.1",
+    "rimraf": "^3.0.2",
+    "three": "^0.117.1",
+    "typescript": "^3.9.5"
+  }
+}
