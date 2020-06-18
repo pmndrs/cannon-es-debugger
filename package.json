@@ -1,6 +1,6 @@
 {
   "name": "cannon-es-debugger",
-  "version": "0.0.1-alpha.2",
+  "version": "0.0.1",
   "description": "Wireframe debugger for use with cannon-es https://github.com/react-spring/cannon-es",
   "keywords": [
     "debugger",
@@ -33,7 +33,7 @@
     "printWidth": 110
   },
   "dependencies": {
-    "cannon-es": "^0.10.0"
+    "cannon-es": "^0.11.0"
   },
   "peerDependencies": {
     "typescript": ">=3.8"
