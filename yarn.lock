@@ -42,10 +42,10 @@ brace-expansion@^1.1.7:
     balanced-match "^1.0.0"
     concat-map "0.0.1"
 
-cannon-es@^0.11.0:
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/cannon-es/-/cannon-es-0.11.0.tgz#400a7bba5bf8256a1b7bd3621339ac2e098be39e"
-  integrity sha512-+98ZypE/+xyH7uer5Wgi5qQPagB5Er6oCiDn/p08cxmj8X+ulI+Pu6hHUu4NxzXQGBw9BjTDN3mX+SE3c0WIJA==
+cannon-es@^0.15.0:
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/cannon-es/-/cannon-es-0.15.0.tgz#0a4c09aaf1acf3789c9813f98350177c5f193842"
+  integrity sha512-R14+lIWqBNAnNGP0DglQ5CUxb0GEYZdXvKbZFfBapOO3UzZ7wBEKb9Dkq1jI+4IHDnb/Oshfc6p6Jsb5fYFzyQ==
 
 chalk@^2.4.2:
   version "2.4.2"
@@ -335,15 +335,15 @@ supports-color@^5.3.0:
   dependencies:
     has-flag "^3.0.0"
 
-three@^0.117.1:
-  version "0.117.1"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.117.1.tgz#a49bcb1a6ddea2f250003e42585dc3e78e92b9d3"
-  integrity sha512-t4zeJhlNzUIj9+ub0l6nICVimSuRTZJOqvk3Rmlu+YGdTOJ49Wna8p7aumpkXJakJfITiybfpYE1XN1o1Z34UQ==
+three@^0.118.3:
+  version "0.118.3"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.118.3.tgz#c0bf8c10a68155478f12f4ccac2ff979526a4a0a"
+  integrity sha512-ijECXrNzDkHieoeh2H69kgawTGH8DiamhR4uBN8jEM7VHSKvfTdEvOoHsA8Aq7dh7PHAxhlqBsN5arBI3KixSw==
 
-typescript@^3.9.5:
-  version "3.9.5"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.5.tgz#586f0dba300cde8be52dd1ac4f7e1009c1b13f36"
-  integrity sha512-hSAifV3k+i6lEoCJ2k6R2Z/rp/H3+8sdmcn5NrS3/3kE7+RyZXm9aqvxWqjEXHAd8b0pShatpcdMTvEdvAJltQ==
+typescript@^3.9.6:
+  version "3.9.6"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.6.tgz#8f3e0198a34c3ae17091b35571d3afd31999365a"
+  integrity sha512-Pspx3oKAPJtjNwE92YS05HQoY7z2SFyOpHo9MqJor3BXAGNaPUs83CuVp9VISFkSjyRfiTpmKuAYGJB7S7hOxw==
 
 which@^2.0.1:
   version "2.0.2"
