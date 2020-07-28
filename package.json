@@ -32,13 +32,18 @@
     "tabWidth": 2,
     "printWidth": 110
   },
-  "dependencies": {
-    "cannon-es": "^0.15.0"
-  },
   "peerDependencies": {
+    "cannon-es": "^0.15.1",
+    "three": "^0.118.3",
     "typescript": ">=3.8"
   },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
+  },
   "devDependencies": {
+    "cannon-es": "^0.15.1",
     "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1",
     "rimraf": "^3.0.2",

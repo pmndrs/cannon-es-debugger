@@ -6,6 +6,18 @@ This is a debugger for use with [cannon-es](https://github.com/react-spring/cann
 **Note:** This debugger currently does not work with [use-cannon](https://github.com/react-spring/use-cannon).
 
 
+### Installation
+
+
+```
+yarn add cannon-es-debugger
+```
+
+Make sure you also have `three` and `cannon-es` as dependencies.
+
+```
+yarn add three cannon-es
+```
 
 ### Usage
 
