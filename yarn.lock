@@ -42,10 +42,10 @@ brace-expansion@^1.1.7:
     balanced-match "^1.0.0"
     concat-map "0.0.1"
 
-cannon-es@^0.15.0:
-  version "0.15.0"
-  resolved "https://registry.yarnpkg.com/cannon-es/-/cannon-es-0.15.0.tgz#0a4c09aaf1acf3789c9813f98350177c5f193842"
-  integrity sha512-R14+lIWqBNAnNGP0DglQ5CUxb0GEYZdXvKbZFfBapOO3UzZ7wBEKb9Dkq1jI+4IHDnb/Oshfc6p6Jsb5fYFzyQ==
+cannon-es@^0.15.1:
+  version "0.15.1"
+  resolved "https://registry.yarnpkg.com/cannon-es/-/cannon-es-0.15.1.tgz#c5185e7efc19ca8b3b494eccd257256425b1642f"
+  integrity sha512-NkrU8OkM5K4q7Ljj69nfwC5UmPuoiAga6v98Aus0QHTdgJFwBfPTDXRkc3qpGGOixdUisFzmJo0DpKWIi6N+4g==
 
 chalk@^2.4.2:
   version "2.4.2"
