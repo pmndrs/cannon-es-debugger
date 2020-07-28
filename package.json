@@ -14,7 +14,7 @@
     "Cody Persinger <codypersinger@gmail.com> (https://github.com/codynova)"
   ],
   "license": "MIT",
-  "module": "dist/index.js",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "sideEffects": false,
   "scripts": {
