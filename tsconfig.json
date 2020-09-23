@@ -9,7 +9,7 @@
     "skipLibCheck": true,
     "declaration": true,
     "removeComments": true,
-    "emitDeclarationOnly": false,
+    "emitDeclarationOnly": true,
     "outDir": "dist",
     "resolveJsonModule": true,
     "noImplicitThis": false,

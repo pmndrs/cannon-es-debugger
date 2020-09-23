@@ -24,16 +24,7 @@
     "build": "npm run typegen && rollup -c",
     "prepare": "npm run build",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false --strict",
-    "typegen": "tsc",
-    "test": "echo tests are missing"
-  },
-  "prettier": {
-    "semi": false,
-    "trailingComma": "es5",
-    "singleQuote": true,
-    "jsxBracketSameLine": true,
-    "tabWidth": 2,
-    "printWidth": 110
+    "typegen": "tsc --outFile dist/cannon-es-debugger.d.ts"
   },
   "peerDependencies": {
     "cannon-es": "^0.15.1",
