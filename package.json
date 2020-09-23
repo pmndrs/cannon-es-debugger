@@ -11,7 +11,8 @@
   ],
   "author": "Stefan Hedman <schteppe@gmail.com> (http://steffe.se)",
   "contributors": [
-    "Cody Persinger <codypersinger@gmail.com> (https://github.com/codynova)"
+    "Cody Persinger <codypersinger@gmail.com> (https://github.com/codynova)",
+    "Marco Fugaro <marco.fugaro@gmail.com> (https://github.com/marcofugaro)"
   ],
   "license": "MIT",
   "main": "dist/index.js",
