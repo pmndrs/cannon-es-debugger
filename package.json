@@ -15,8 +15,9 @@
     "Marco Fugaro <marco.fugaro@gmail.com> (https://github.com/marcofugaro)"
   ],
   "license": "MIT",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/cannon-es-debugger.cjs.js",
+  "module": "./dist/cannon-es-debugger.js",
+  "types": "./dist/cannon-es-debugger.d.ts",
   "sideEffects": false,
   "scripts": {
     "prebuild": "rimraf dist",

@@ -2,7 +2,6 @@ import {
   Vec3 as CannonVector3,
   Sphere,
   Box,
-  Plane,
   ConvexPolyhedron,
   Trimesh,
   Heightfield,
@@ -26,12 +25,12 @@ import type { Scene, Color } from 'three'
 
 type ComplexShape = Shape & { geometryId?: number }
 type DebugOptions = {
-  color?: string | number | Color,
-  onInit?: (body: Body, mesh: Mesh, shape: Shape) => void,
-  onUpdate?: (body: Body, mesh: Mesh, shape: Shape) => void,
+  color?: string | number | Color
+  onInit?: (body: Body, mesh: Mesh, shape: Shape) => void
+  onUpdate?: (body: Body, mesh: Mesh, shape: Shape) => void
 }
 
-export default function renderWireframes(scene: Scene, bodies: Body[], options: DebugOptions = {}) {
+export default function cannonDebugger(scene: Scene, bodies: Body[], options: DebugOptions = {}) {
   const _meshes: Mesh[] = []
   const _material = new MeshBasicMaterial({ color: options.color ?? 0x00ff00, wireframe: true })
   const _tempVec0 = new CannonVector3()
