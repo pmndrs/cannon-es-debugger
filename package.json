@@ -15,23 +15,16 @@
     "Marco Fugaro <marco.fugaro@gmail.com> (https://github.com/marcofugaro)"
   ],
   "license": "MIT",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/cannon-es-debugger.cjs.js",
+  "module": "./dist/cannon-es-debugger.js",
+  "types": "./dist/cannon-es-debugger.d.ts",
   "sideEffects": false,
   "scripts": {
-    "prebuild": "rimraf dist && npm run typegen",
-    "prepare": "npm run typegen",
+    "prebuild": "rimraf dist",
+    "build": "npm run typegen && rollup -c",
+    "prepare": "npm run build",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false --strict",
-    "typegen": "tsc",
-    "test": "echo tests are missing"
-  },
-  "prettier": {
-    "semi": false,
-    "trailingComma": "es5",
-    "singleQuote": true,
-    "jsxBracketSameLine": true,
-    "tabWidth": 2,
-    "printWidth": 110
+    "typegen": "tsc --outFile dist/cannon-es-debugger.d.ts"
   },
   "peerDependencies": {
     "cannon-es": "^0.15.1",
@@ -44,10 +37,16 @@
     }
   },
   "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "@babel/preset-typescript": "^7.10.4",
+    "@rollup/plugin-babel": "^5.2.1",
+    "@rollup/plugin-node-resolve": "^9.0.0",
     "cannon-es": "^0.15.1",
     "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1",
     "rimraf": "^3.0.2",
+    "rollup": "^2.28.1",
     "three": "^0.118.3",
     "typescript": "^3.9.6"
   }
