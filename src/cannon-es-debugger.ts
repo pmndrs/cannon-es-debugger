@@ -28,6 +28,7 @@ type DebugOptions = {
   color?: string | number | Color
   onInit?: (body: Body, mesh: Mesh, shape: Shape) => void
   onUpdate?: (body: Body, mesh: Mesh, shape: Shape) => void
+  autoUpdate?: Boolean
 }
 
 export default function cannonDebugger(scene: Scene, bodies: Body[], options: DebugOptions = {}) {
@@ -282,8 +283,16 @@ export default function cannonDebugger(scene: Scene, bodies: Body[], options: De
 
     meshes.length = meshIndex
 
+    if (options.autoUpdate !== false) {
+      requestAnimationFrame(update)
+    }
+  }
+
+  if (options.autoUpdate !== false) {
     requestAnimationFrame(update)
   }
 
-  requestAnimationFrame(update)
+  return {
+    update,
+  }
 }

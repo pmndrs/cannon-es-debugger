@@ -44,6 +44,7 @@ type DebugOptions = {
   color?: string | number | Color
   onInit?: (body: Body, mesh: Mesh, shape: Shape) => void
   onUpdate?: (body: Body, mesh: Mesh, shape: Shape) => void
+  autoUpdate?: Boolean
 }
 
 export default function cannonDebugger(scene: Scene, bodies: Body[], options: DebugOptions): void
@@ -54,3 +55,7 @@ export default function cannonDebugger(scene: Scene, bodies: Body[], options: De
 - **`onInit`** - callback function that runs once, right after a new wireframe mesh is added
 
 - **`onUpdate`** - callback function that runs on every subsequent animation frame
+
+- **`autoUpdate`** - wheter or not the debugger should update by itself (default: `true`)
+
+If you set `autoUpdate: false`, then you can use the `update()` method included in the returned object to update the debugger manually.
