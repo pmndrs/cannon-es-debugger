@@ -56,6 +56,6 @@ export default function cannonDebugger(scene: Scene, bodies: Body[], options: De
 
 - **`onUpdate`** - callback function that runs on every subsequent animation frame
 
-- **`autoUpdate`** - wheter or not the debugger should update by itself
+- **`autoUpdate`** - wheter or not the debugger should update by itself (default: `true`)
 
 If you set `autoUpdate: false`, then you can use the `update()` method included in the returned object to update the debugger manually.
