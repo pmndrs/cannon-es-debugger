@@ -46,7 +46,7 @@ type DebugOptions = {
   onUpdate?: (body: Body, mesh: Mesh, shape: Shape) => void
 }
 
-export default function renderWireframes(scene: Scene, bodies: Body[], options: DebugOptions): void
+export default function cannonDebugger(scene: Scene, bodies: Body[], options: DebugOptions): void
 ```
 
 - **`color`** - a [Three Color](https://threejs.org/docs/#api/en/math/Color) argument that sets the wireframe color, defaults to `0x00ff00`
