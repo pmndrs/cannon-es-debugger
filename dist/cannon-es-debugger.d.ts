@@ -7,6 +7,9 @@ declare module "cannon-es-debugger" {
         color?: string | number | Color;
         onInit?: (body: Body, mesh: Mesh, shape: Shape) => void;
         onUpdate?: (body: Body, mesh: Mesh, shape: Shape) => void;
+        autoUpdate?: Boolean;
     };
-    export default function cannonDebugger(scene: Scene, bodies: Body[], options?: DebugOptions): void;
+    export default function cannonDebugger(scene: Scene, bodies: Body[], options?: DebugOptions): {
+        update: () => void;
+    };
 }

@@ -289,10 +289,19 @@ function cannonDebugger(scene, bodies, options = {}) {
     }
 
     meshes.length = meshIndex;
+
+    if (options.autoUpdate !== false) {
+      requestAnimationFrame(update);
+    }
+  }
+
+  if (options.autoUpdate !== false) {
     requestAnimationFrame(update);
   }
 
-  requestAnimationFrame(update);
+  return {
+    update
+  };
 }
 
 module.exports = cannonDebugger;
