@@ -7,6 +7,7 @@ import {
   Heightfield,
   Shape,
   Quaternion as CannonQuaternion,
+  Cylinder,
 } from 'cannon-es'
 import {
   MeshBasicMaterial,
@@ -41,7 +42,6 @@ export default function cannonDebugger(scene: Scene, bodies: Body[], options: De
   const _sphereGeometry = new SphereGeometry(1)
   const _boxGeometry = new BoxGeometry(1, 1, 1)
   const _planeGeometry = new PlaneGeometry(10, 10, 10, 10)
-  const _cylinderGeometry = new CylinderGeometry(0.5, 0.5, 1, 32)
 
   function createConvexPolyhedronGeometry(shape: ConvexPolyhedron): Geometry {
     const geometry = new Geometry()
@@ -134,7 +134,13 @@ export default function cannonDebugger(scene: Scene, bodies: Body[], options: De
       }
 
       case CYLINDER: {
-        mesh = new Mesh(_cylinderGeometry, _material)
+        const cylinderGeometry = new CylinderGeometry(
+          (shape as Cylinder).radiusTop,
+          (shape as Cylinder).radiusBottom,
+          (shape as Cylinder).height,
+          (shape as Cylinder).numSegments
+        )
+        mesh = new Mesh(cylinderGeometry, _material)
         break
       }
 
@@ -217,6 +223,7 @@ export default function cannonDebugger(scene: Scene, bodies: Body[], options: De
       (geometry instanceof SphereGeometry && shape.type === Shape.types.SPHERE) ||
       (geometry instanceof BoxGeometry && shape.type === Shape.types.BOX) ||
       (geometry instanceof PlaneGeometry && shape.type === Shape.types.PLANE) ||
+      (geometry instanceof CylinderGeometry && shape.type === Shape.types.CYLINDER) ||
       (geometry.id === (shape as ComplexShape).geometryId && shape.type === Shape.types.CONVEXPOLYHEDRON) ||
       (geometry.id === (shape as ComplexShape).geometryId && shape.type === Shape.types.TRIMESH) ||
       (geometry.id === (shape as ComplexShape).geometryId && shape.type === Shape.types.HEIGHTFIELD)
@@ -254,9 +261,14 @@ export default function cannonDebugger(scene: Scene, bodies: Body[], options: De
         const mesh = meshes[meshIndex]
 
         if (mesh) {
+          // Get world position
           body.quaternion.vmult(body.shapeOffsets[i], shapeWorldPosition)
           body.position.vadd(shapeWorldPosition, shapeWorldPosition)
+
+          // Get world quaternion
           body.quaternion.mult(body.shapeOrientations[i], shapeWorldQuaternion)
+
+          // Copy to meshes
           mesh.position.copy((shapeWorldPosition as unknown) as ThreeVector3)
           mesh.quaternion.copy((shapeWorldQuaternion as unknown) as ThreeQuaternion)
 
