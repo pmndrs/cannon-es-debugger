@@ -27,8 +27,6 @@ function cannonDebugger(scene, bodies, options = {}) {
 
   const _planeGeometry = new three.PlaneGeometry(10, 10, 10, 10);
 
-  const _cylinderGeometry = new three.CylinderGeometry(0.5, 0.5, 1, 32);
-
   function createConvexPolyhedronGeometry(shape) {
     const geometry = new three.Geometry();
     shape.vertices.forEach(({
@@ -128,7 +126,8 @@ function cannonDebugger(scene, bodies, options = {}) {
 
       case CYLINDER:
         {
-          mesh = new three.Mesh(_cylinderGeometry, _material);
+          const cylinderGeometry = new three.CylinderGeometry(shape.radiusTop, shape.radiusBottom, shape.height, shape.numSegments);
+          mesh = new three.Mesh(cylinderGeometry, _material);
           break;
         }
 
@@ -228,7 +227,7 @@ function cannonDebugger(scene, bodies, options = {}) {
     const {
       geometry
     } = mesh;
-    return geometry instanceof three.SphereGeometry && shape.type === cannonEs.Shape.types.SPHERE || geometry instanceof three.BoxGeometry && shape.type === cannonEs.Shape.types.BOX || geometry instanceof three.PlaneGeometry && shape.type === cannonEs.Shape.types.PLANE || geometry.id === shape.geometryId && shape.type === cannonEs.Shape.types.CONVEXPOLYHEDRON || geometry.id === shape.geometryId && shape.type === cannonEs.Shape.types.TRIMESH || geometry.id === shape.geometryId && shape.type === cannonEs.Shape.types.HEIGHTFIELD;
+    return geometry instanceof three.SphereGeometry && shape.type === cannonEs.Shape.types.SPHERE || geometry instanceof three.BoxGeometry && shape.type === cannonEs.Shape.types.BOX || geometry instanceof three.PlaneGeometry && shape.type === cannonEs.Shape.types.PLANE || geometry instanceof three.CylinderGeometry && shape.type === cannonEs.Shape.types.CYLINDER || geometry.id === shape.geometryId && shape.type === cannonEs.Shape.types.CONVEXPOLYHEDRON || geometry.id === shape.geometryId && shape.type === cannonEs.Shape.types.TRIMESH || geometry.id === shape.geometryId && shape.type === cannonEs.Shape.types.HEIGHTFIELD;
   }
 
   function updateMesh(index, shape) {
@@ -261,9 +260,12 @@ function cannonDebugger(scene, bodies, options = {}) {
         const mesh = meshes[meshIndex];
 
         if (mesh) {
+          // Get world position
           body.quaternion.vmult(body.shapeOffsets[i], shapeWorldPosition);
-          body.position.vadd(shapeWorldPosition, shapeWorldPosition);
-          body.quaternion.mult(body.shapeOrientations[i], shapeWorldQuaternion);
+          body.position.vadd(shapeWorldPosition, shapeWorldPosition); // Get world quaternion
+
+          body.quaternion.mult(body.shapeOrientations[i], shapeWorldQuaternion); // Copy to meshes
+
           mesh.position.copy(shapeWorldPosition);
           mesh.quaternion.copy(shapeWorldQuaternion);
 
