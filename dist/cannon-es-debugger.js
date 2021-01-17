@@ -1,5 +1,5 @@
 import { Vec3, Quaternion, Shape } from 'cannon-es';
-import { MeshBasicMaterial, SphereGeometry, BoxGeometry, PlaneGeometry, CylinderGeometry, Mesh, Geometry, Vector3, Face3 } from 'three';
+import { MeshBasicMaterial, SphereGeometry, BoxGeometry, PlaneGeometry, Mesh, CylinderGeometry, Geometry, Vector3, Face3 } from 'three';
 
 function cannonDebugger(scene, bodies, options = {}) {
   var _options$color;
@@ -24,8 +24,6 @@ function cannonDebugger(scene, bodies, options = {}) {
   const _boxGeometry = new BoxGeometry(1, 1, 1);
 
   const _planeGeometry = new PlaneGeometry(10, 10, 10, 10);
-
-  const _cylinderGeometry = new CylinderGeometry(0.5, 0.5, 1, 32);
 
   function createConvexPolyhedronGeometry(shape) {
     const geometry = new Geometry();
@@ -126,7 +124,9 @@ function cannonDebugger(scene, bodies, options = {}) {
 
       case CYLINDER:
         {
-          mesh = new Mesh(_cylinderGeometry, _material);
+          const geometry = new CylinderGeometry(shape.radiusTop, shape.radiusBottom, shape.height, shape.numSegments);
+          mesh = new Mesh(geometry, _material);
+          shape.geometryId = geometry.id;
           break;
         }
 
@@ -226,7 +226,7 @@ function cannonDebugger(scene, bodies, options = {}) {
     const {
       geometry
     } = mesh;
-    return geometry instanceof SphereGeometry && shape.type === Shape.types.SPHERE || geometry instanceof BoxGeometry && shape.type === Shape.types.BOX || geometry instanceof PlaneGeometry && shape.type === Shape.types.PLANE || geometry.id === shape.geometryId && shape.type === Shape.types.CONVEXPOLYHEDRON || geometry.id === shape.geometryId && shape.type === Shape.types.TRIMESH || geometry.id === shape.geometryId && shape.type === Shape.types.HEIGHTFIELD;
+    return geometry instanceof SphereGeometry && shape.type === Shape.types.SPHERE || geometry instanceof BoxGeometry && shape.type === Shape.types.BOX || geometry instanceof PlaneGeometry && shape.type === Shape.types.PLANE || geometry.id === shape.geometryId && shape.type === Shape.types.CYLINDER || geometry.id === shape.geometryId && shape.type === Shape.types.CONVEXPOLYHEDRON || geometry.id === shape.geometryId && shape.type === Shape.types.TRIMESH || geometry.id === shape.geometryId && shape.type === Shape.types.HEIGHTFIELD;
   }
 
   function updateMesh(index, shape) {
@@ -259,9 +259,12 @@ function cannonDebugger(scene, bodies, options = {}) {
         const mesh = meshes[meshIndex];
 
         if (mesh) {
+          // Get world position
           body.quaternion.vmult(body.shapeOffsets[i], shapeWorldPosition);
-          body.position.vadd(shapeWorldPosition, shapeWorldPosition);
-          body.quaternion.mult(body.shapeOrientations[i], shapeWorldQuaternion);
+          body.position.vadd(shapeWorldPosition, shapeWorldPosition); // Get world quaternion
+
+          body.quaternion.mult(body.shapeOrientations[i], shapeWorldQuaternion); // Copy to meshes
+
           mesh.position.copy(shapeWorldPosition);
           mesh.quaternion.copy(shapeWorldQuaternion);
 
