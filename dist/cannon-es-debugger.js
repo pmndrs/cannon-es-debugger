@@ -124,8 +124,9 @@ function cannonDebugger(scene, bodies, options = {}) {
 
       case CYLINDER:
         {
-          const cylinderGeometry = new CylinderGeometry(shape.radiusTop, shape.radiusBottom, shape.height, shape.numSegments);
-          mesh = new Mesh(cylinderGeometry, _material);
+          const geometry = new CylinderGeometry(shape.radiusTop, shape.radiusBottom, shape.height, shape.numSegments);
+          mesh = new Mesh(geometry, _material);
+          shape.geometryId = geometry.id;
           break;
         }
 
@@ -225,7 +226,7 @@ function cannonDebugger(scene, bodies, options = {}) {
     const {
       geometry
     } = mesh;
-    return geometry instanceof SphereGeometry && shape.type === Shape.types.SPHERE || geometry instanceof BoxGeometry && shape.type === Shape.types.BOX || geometry instanceof PlaneGeometry && shape.type === Shape.types.PLANE || geometry instanceof CylinderGeometry && shape.type === Shape.types.CYLINDER || geometry.id === shape.geometryId && shape.type === Shape.types.CONVEXPOLYHEDRON || geometry.id === shape.geometryId && shape.type === Shape.types.TRIMESH || geometry.id === shape.geometryId && shape.type === Shape.types.HEIGHTFIELD;
+    return geometry instanceof SphereGeometry && shape.type === Shape.types.SPHERE || geometry instanceof BoxGeometry && shape.type === Shape.types.BOX || geometry instanceof PlaneGeometry && shape.type === Shape.types.PLANE || geometry.id === shape.geometryId && shape.type === Shape.types.CYLINDER || geometry.id === shape.geometryId && shape.type === Shape.types.CONVEXPOLYHEDRON || geometry.id === shape.geometryId && shape.type === Shape.types.TRIMESH || geometry.id === shape.geometryId && shape.type === Shape.types.HEIGHTFIELD;
   }
 
   function updateMesh(index, shape) {

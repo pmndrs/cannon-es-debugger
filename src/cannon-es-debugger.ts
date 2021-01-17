@@ -134,13 +134,14 @@ export default function cannonDebugger(scene: Scene, bodies: Body[], options: De
       }
 
       case CYLINDER: {
-        const cylinderGeometry = new CylinderGeometry(
+        const geometry = new CylinderGeometry(
           (shape as Cylinder).radiusTop,
           (shape as Cylinder).radiusBottom,
           (shape as Cylinder).height,
           (shape as Cylinder).numSegments
         )
-        mesh = new Mesh(cylinderGeometry, _material)
+        mesh = new Mesh(geometry, _material)
+        ;(shape as ComplexShape).geometryId = geometry.id
         break
       }
 
@@ -223,7 +224,7 @@ export default function cannonDebugger(scene: Scene, bodies: Body[], options: De
       (geometry instanceof SphereGeometry && shape.type === Shape.types.SPHERE) ||
       (geometry instanceof BoxGeometry && shape.type === Shape.types.BOX) ||
       (geometry instanceof PlaneGeometry && shape.type === Shape.types.PLANE) ||
-      (geometry instanceof CylinderGeometry && shape.type === Shape.types.CYLINDER) ||
+      (geometry.id === (shape as ComplexShape).geometryId && shape.type === Shape.types.CYLINDER) ||
       (geometry.id === (shape as ComplexShape).geometryId && shape.type === Shape.types.CONVEXPOLYHEDRON) ||
       (geometry.id === (shape as ComplexShape).geometryId && shape.type === Shape.types.TRIMESH) ||
       (geometry.id === (shape as ComplexShape).geometryId && shape.type === Shape.types.HEIGHTFIELD)
