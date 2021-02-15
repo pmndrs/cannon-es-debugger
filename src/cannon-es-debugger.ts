@@ -16,10 +16,10 @@ import {
   PlaneGeometry,
   CylinderGeometry,
   Mesh,
-  Geometry,
   Vector3 as ThreeVector3,
-  Face3,
   Quaternion as ThreeQuaternion,
+  BufferGeometry,
+  Float32BufferAttribute,
 } from 'three'
 import type { Body } from 'cannon-es'
 import type { Scene, Color } from 'three'
@@ -43,73 +43,84 @@ export default function cannonDebugger(scene: Scene, bodies: Body[], options: De
   const _boxGeometry = new BoxGeometry(1, 1, 1)
   const _planeGeometry = new PlaneGeometry(10, 10, 10, 10)
 
-  function createConvexPolyhedronGeometry(shape: ConvexPolyhedron): Geometry {
-    const geometry = new Geometry()
-    shape.vertices.forEach(({ x, y, z }) => geometry.vertices.push(new ThreeVector3(x, y, z)))
-    shape.faces.forEach((face) => {
-      for (let i = 1; i < face.length - 1; i++) {
-        geometry.faces.push(new Face3(face[0], face[i], face[i + 1]))
+  function createConvexPolyhedronGeometry(shape: ConvexPolyhedron): BufferGeometry {
+    const geometry = new BufferGeometry()
+
+    // Add vertices
+    const positions = []
+    for (let i = 0; i < shape.vertices.length; i++) {
+      const vertex = shape.vertices[i]
+      positions.push(vertex.x, vertex.y, vertex.z)
+    }
+    geometry.setAttribute('position', new Float32BufferAttribute(positions, 3))
+
+    // Add faces
+    const indices = []
+    for (let i = 0; i < shape.faces.length; i++) {
+      const face = shape.faces[i]
+
+      const a = face[0]
+      for (let j = 1; j < face.length - 1; j++) {
+        const b = face[j]
+        const c = face[j + 1]
+        indices.push(a, b, c)
       }
-    })
+    }
+    geometry.setIndex(indices)
+
     geometry.computeBoundingSphere()
-    geometry.computeFaceNormals()
+    geometry.computeVertexNormals()
     return geometry
   }
 
-  function createTrimeshGeometry(shape: Trimesh): Geometry {
-    const geometry = new Geometry()
+  function createTrimeshGeometry(shape: Trimesh): BufferGeometry {
+    const geometry = new BufferGeometry()
+
+    const positions = []
     const v0 = _tempVec0
     const v1 = _tempVec1
     const v2 = _tempVec2
-
     for (let i = 0; i < shape.indices.length / 3; i++) {
       shape.getTriangleVertices(i, v0, v1, v2)
-      geometry.vertices.push(
-        new ThreeVector3(v0.x, v0.y, v0.z),
-        new ThreeVector3(v1.x, v1.y, v1.z),
-        new ThreeVector3(v2.x, v2.y, v2.z)
-      )
-      const index = geometry.vertices.length - 3
-      geometry.faces.push(new Face3(index, index + 1, index + 2))
+      positions.push(v0.x, v0.y, v0.z)
+      positions.push(v1.x, v1.y, v1.z)
+      positions.push(v2.x, v2.y, v2.z)
     }
+    geometry.setAttribute('position', new Float32BufferAttribute(positions, 3))
 
     geometry.computeBoundingSphere()
-    geometry.computeFaceNormals()
+    geometry.computeVertexNormals()
     return geometry
   }
 
-  function createHeightfieldGeometry(shape: Heightfield): Geometry {
-    const geometry = new Geometry()
+  function createHeightfieldGeometry(shape: Heightfield): BufferGeometry {
+    const geometry = new BufferGeometry()
+
+    const positions = []
     const v0 = _tempVec0
     const v1 = _tempVec1
     const v2 = _tempVec2
-    const { data } = shape
-
-    for (let i = 0; i < data.length - 1; i++) {
-      for (let j = 0; j < data[i].length - 1; j++) {
+    for (let xi = 0; xi < shape.data.length - 1; xi++) {
+      for (let yi = 0; yi < shape.data[xi].length - 1; yi++) {
         for (let k = 0; k < 2; k++) {
-          shape.getConvexTrianglePillar(i, j, k === 0)
+          shape.getConvexTrianglePillar(xi, yi, k === 0)
           v0.copy(shape.pillarConvex.vertices[0])
           v1.copy(shape.pillarConvex.vertices[1])
           v2.copy(shape.pillarConvex.vertices[2])
           v0.vadd(shape.pillarOffset, v0)
           v1.vadd(shape.pillarOffset, v1)
           v2.vadd(shape.pillarOffset, v2)
-
-          geometry.vertices.push(
-            new ThreeVector3(v0.x, v0.y, v0.z),
-            new ThreeVector3(v1.x, v1.y, v1.z),
-            new ThreeVector3(v2.x, v2.y, v2.z)
-          )
-
-          const index = geometry.vertices.length - 3
-          geometry.faces.push(new Face3(index, index + 1, index + 2))
+          positions.push(v0.x, v0.y, v0.z)
+          positions.push(v1.x, v1.y, v1.z)
+          positions.push(v2.x, v2.y, v2.z)
         }
       }
     }
+    geometry.setAttribute('position', new Float32BufferAttribute(positions, 3))
 
     geometry.computeBoundingSphere()
-    geometry.computeFaceNormals()
+    geometry.computeVertexNormals()
+
     return geometry
   }
 
