@@ -28,7 +28,7 @@
   },
   "peerDependencies": {
     "cannon-es": "0.x.x",
-    "three": ">=0.125.0",
+    "three": "0.x.x",
     "typescript": ">=3.8"
   },
   "peerDependenciesMeta": {
