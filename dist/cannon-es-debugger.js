@@ -1,13 +1,17 @@
 import { Vec3, Quaternion, Shape } from 'cannon-es';
 import { MeshBasicMaterial, SphereGeometry, BoxGeometry, PlaneGeometry, Mesh, CylinderGeometry, BufferGeometry, Float32BufferAttribute } from 'three';
 
-function cannonDebugger(scene, bodies, options = {}) {
-  var _options$color;
-
+function cannonDebugger(scene, bodies, {
+  color = 0x00ff00,
+  scale = 1,
+  onInit,
+  onUpdate,
+  autoUpdate
+} = {}) {
   const _meshes = [];
 
   const _material = new MeshBasicMaterial({
-    color: (_options$color = options.color) != null ? _options$color : 0x00ff00,
+    color: color != null ? color : 0x00ff00,
     wireframe: true
   });
 
@@ -191,14 +195,14 @@ function cannonDebugger(scene, bodies, options = {}) {
           const {
             radius
           } = shape;
-          mesh.scale.set(radius, radius, radius);
+          mesh.scale.set(radius * scale, radius * scale, radius * scale);
           break;
         }
 
       case BOX:
         {
           mesh.scale.copy(shape.halfExtents);
-          mesh.scale.multiplyScalar(2);
+          mesh.scale.multiplyScalar(2 * scale);
           break;
         }
 
@@ -209,35 +213,32 @@ function cannonDebugger(scene, bodies, options = {}) {
 
       case CYLINDER:
         {
-          mesh.scale.set(1, 1, 1);
+          mesh.scale.set(1 * scale, 1 * scale, 1 * scale);
           break;
         }
 
       case CONVEXPOLYHEDRON:
         {
-          mesh.scale.set(1, 1, 1);
+          mesh.scale.set(1 * scale, 1 * scale, 1 * scale);
           break;
         }
 
       case TRIMESH:
         {
-          mesh.scale.copy(shape.scale);
+          mesh.scale.copy(shape.scale).multiplyScalar(scale);
           break;
         }
 
       case HEIGHTFIELD:
         {
-          mesh.scale.set(1, 1, 1);
+          mesh.scale.set(1 * scale, 1 * scale, 1 * scale);
           break;
         }
     }
   }
 
   function typeMatch(mesh, shape) {
-    if (!mesh) {
-      return false;
-    }
-
+    if (!mesh) return false;
     const {
       geometry
     } = mesh;
@@ -249,10 +250,7 @@ function cannonDebugger(scene, bodies, options = {}) {
     let didCreateNewMesh = false;
 
     if (!typeMatch(mesh, shape)) {
-      if (mesh) {
-        scene.remove(mesh);
-      }
-
+      if (mesh) scene.remove(mesh);
       _meshes[index] = mesh = createMesh(shape);
       didCreateNewMesh = true;
     }
@@ -282,14 +280,8 @@ function cannonDebugger(scene, bodies, options = {}) {
 
           mesh.position.copy(shapeWorldPosition);
           mesh.quaternion.copy(shapeWorldQuaternion);
-
-          if (didCreateNewMesh && options.onInit instanceof Function) {
-            options.onInit(body, mesh, shape);
-          }
-
-          if (!didCreateNewMesh && options.onUpdate instanceof Function) {
-            options.onUpdate(body, mesh, shape);
-          }
+          if (didCreateNewMesh && onInit instanceof Function) onInit(body, mesh, shape);
+          if (!didCreateNewMesh && onUpdate instanceof Function) onUpdate(body, mesh, shape);
         }
 
         meshIndex++;
@@ -298,23 +290,14 @@ function cannonDebugger(scene, bodies, options = {}) {
 
     for (let i = meshIndex; i < meshes.length; i++) {
       const mesh = meshes[i];
-
-      if (mesh) {
-        scene.remove(mesh);
-      }
+      if (mesh) scene.remove(mesh);
     }
 
     meshes.length = meshIndex;
-
-    if (options.autoUpdate !== false) {
-      requestAnimationFrame(update);
-    }
+    if (autoUpdate !== false) requestAnimationFrame(update);
   }
 
-  if (options.autoUpdate !== false) {
-    requestAnimationFrame(update);
-  }
-
+  if (autoUpdate !== false) requestAnimationFrame(update);
   return {
     update
   };

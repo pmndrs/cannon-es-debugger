@@ -42,6 +42,7 @@ import type { Body } from 'cannon-es'
 
 type DebugOptions = {
   color?: string | number | Color
+  scale?: number
   onInit?: (body: Body, mesh: Mesh, shape: Shape) => void
   onUpdate?: (body: Body, mesh: Mesh, shape: Shape) => void
   autoUpdate?: Boolean
@@ -51,6 +52,8 @@ export default function cannonDebugger(scene: Scene, bodies: Body[], options: De
 ```
 
 - **`color`** - a [Three Color](https://threejs.org/docs/#api/en/math/Color) argument that sets the wireframe color, defaults to `0x00ff00`
+
+- **`scale`** - scale factor, defaults to 1
 
 - **`onInit`** - callback function that runs once, right after a new wireframe mesh is added
 
