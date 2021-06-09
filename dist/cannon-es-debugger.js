@@ -11,7 +11,7 @@ function cannonDebugger(scene, bodies, {
   const _meshes = [];
 
   const _material = new MeshBasicMaterial({
-    color: color != null ? color : 0x00ff00,
+    color: color ?? 0x00ff00,
     wireframe: true
   });
 
@@ -82,28 +82,21 @@ function cannonDebugger(scene, bodies, {
 
   function createHeightfieldGeometry(shape) {
     const geometry = new BufferGeometry();
-    const positions = [];
-    const v0 = _tempVec0;
-    const v1 = _tempVec1;
-    const v2 = _tempVec2;
+    const s = shape.elementSize || 1; // assumes square heightfield, else i*x, j*y
+
+    const positions = shape.data.flatMap((row, i) => row.flatMap((z, j) => [i * s, j * s, z]));
+    const indices = [];
 
     for (let xi = 0; xi < shape.data.length - 1; xi++) {
       for (let yi = 0; yi < shape.data[xi].length - 1; yi++) {
-        for (let k = 0; k < 2; k++) {
-          shape.getConvexTrianglePillar(xi, yi, k === 0);
-          v0.copy(shape.pillarConvex.vertices[0]);
-          v1.copy(shape.pillarConvex.vertices[1]);
-          v2.copy(shape.pillarConvex.vertices[2]);
-          v0.vadd(shape.pillarOffset, v0);
-          v1.vadd(shape.pillarOffset, v1);
-          v2.vadd(shape.pillarOffset, v2);
-          positions.push(v0.x, v0.y, v0.z);
-          positions.push(v1.x, v1.y, v1.z);
-          positions.push(v2.x, v2.y, v2.z);
-        }
+        const stride = shape.data[xi].length;
+        const index = xi * stride + yi;
+        indices.push(index + 1, index + stride, index + stride + 1);
+        indices.push(index + stride, index + 1, index);
       }
     }
 
+    geometry.setIndex(indices);
     geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
     geometry.computeBoundingSphere();
     geometry.computeVertexNormals();

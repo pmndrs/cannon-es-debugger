@@ -13,6 +13,10 @@
     "outDir": "dist",
     "resolveJsonModule": true,
     "noImplicitThis": false,
+    "lib": [
+      "es2019",
+      "dom"
+    ],
     "baseUrl": "./src"
   },
   "include": ["./src"],
