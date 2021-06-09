@@ -13,7 +13,7 @@ function cannonDebugger(scene, bodies, {
   const _meshes = [];
 
   const _material = new three.MeshBasicMaterial({
-    color: color ?? 0x00ff00,
+    color: color != null ? color : 0x00ff00,
     wireframe: true
   });
 
