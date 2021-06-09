@@ -2,7 +2,7 @@
 
 This is a debugger for use with [cannon-es](https://github.com/pmndrs/cannon-es). It was adapted from the [original cannon.js debugger](https://github.com/schteppe/cannon.js/blob/master/tools/threejs/CannonDebugRenderer.js) written by Stefan Hedman [@schteppe](https://github.com/schteppe).
 
-**Note:** This debugger currently does not work with [use-cannon](https://github.com/pmndrs/use-cannon).
+**Note:** This debugger is implemented within [use-cannon](https://github.com/pmndrs/use-cannon#debug) directly.
 
 ### Installation
 
