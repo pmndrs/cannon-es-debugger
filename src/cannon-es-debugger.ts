@@ -8,6 +8,7 @@ import {
   Shape,
   Quaternion as CannonQuaternion,
   Cylinder,
+  ShapeType,
 } from 'cannon-es'
 import {
   MeshBasicMaterial,
@@ -25,21 +26,38 @@ import type { Body } from 'cannon-es'
 import type { Scene, Color } from 'three'
 
 type ComplexShape = Shape & { geometryId?: number }
+
+type ColorFn = (shape: ShapeType) => string | number | Color
+
 export type DebugOptions = {
-  color?: string | number | Color
+  color?: string | number | Color | ColorFn
   scale?: number
   onInit?: (body: Body, mesh: Mesh, shape: Shape) => void
   onUpdate?: (body: Body, mesh: Mesh, shape: Shape) => void
   autoUpdate?: Boolean
 }
 
+const getColorFromShape: ColorFn = (shape) => {
+  switch (shape) {
+    case Shape.types.BOX:
+    case Shape.types.CONVEXPOLYHEDRON:
+      return 0x0000ff
+    case Shape.types.TRIMESH:
+    case Shape.types.HEIGHTFIELD:
+      return 0xff0000
+    default:
+      return 0x00ff00
+  }
+}
+
 export default function cannonDebugger(
   scene: Scene,
   bodies: Body[],
-  { color = 0x00ff00, scale = 1, onInit, onUpdate, autoUpdate }: DebugOptions = {}
+  { color = getColorFromShape, scale = 1, onInit, onUpdate, autoUpdate }: DebugOptions = {}
 ) {
   const _meshes: Mesh[] = []
-  const _material = new MeshBasicMaterial({ color: color ?? 0x00ff00, wireframe: true })
+  const _materials = new Map()
+
   const _tempVec0 = new CannonVector3()
   const _tempVec1 = new CannonVector3()
   const _tempVec2 = new CannonVector3()
@@ -119,21 +137,33 @@ export default function cannonDebugger(
     return geometry
   }
 
+  function getMaterial(shape: ShapeType) {
+    if (_materials.has(shape)) {
+      return _materials.get(shape)
+    }
+
+    const meshColor = typeof color === 'function' ? color(shape) : color
+    const material = new MeshBasicMaterial({ color: meshColor, wireframe: true })
+    _materials.set(shape, material)
+
+    return material
+  }
+
   function createMesh(shape: Shape): Mesh {
     let mesh = new Mesh()
     const { SPHERE, BOX, PLANE, CYLINDER, CONVEXPOLYHEDRON, TRIMESH, HEIGHTFIELD } = Shape.types
 
     switch (shape.type) {
       case SPHERE: {
-        mesh = new Mesh(_sphereGeometry, _material)
+        mesh = new Mesh(_sphereGeometry, getMaterial(shape.type))
         break
       }
       case BOX: {
-        mesh = new Mesh(_boxGeometry, _material)
+        mesh = new Mesh(_boxGeometry, getMaterial(shape.type))
         break
       }
       case PLANE: {
-        mesh = new Mesh(_planeGeometry, _material)
+        mesh = new Mesh(_planeGeometry, getMaterial(shape.type))
         break
       }
       case CYLINDER: {
@@ -143,25 +173,25 @@ export default function cannonDebugger(
           (shape as Cylinder).height,
           (shape as Cylinder).numSegments
         )
-        mesh = new Mesh(geometry, _material)
+        mesh = new Mesh(geometry, getMaterial(shape.type))
         ;(shape as ComplexShape).geometryId = geometry.id
         break
       }
       case CONVEXPOLYHEDRON: {
         const geometry = createConvexPolyhedronGeometry(shape as ConvexPolyhedron)
-        mesh = new Mesh(geometry, _material)
+        mesh = new Mesh(geometry, getMaterial(shape.type))
         ;(shape as ComplexShape).geometryId = geometry.id
         break
       }
       case TRIMESH: {
         const geometry = createTrimeshGeometry(shape as Trimesh)
-        mesh = new Mesh(geometry, _material)
+        mesh = new Mesh(geometry, getMaterial(shape.type))
         ;(shape as ComplexShape).geometryId = geometry.id
         break
       }
       case HEIGHTFIELD: {
         const geometry = createHeightfieldGeometry(shape as Heightfield)
-        mesh = new Mesh(geometry, _material)
+        mesh = new Mesh(geometry, getMaterial(shape.type))
         ;(shape as ComplexShape).geometryId = geometry.id
         break
       }

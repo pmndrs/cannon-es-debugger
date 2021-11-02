@@ -1,8 +1,23 @@
 import { Vec3, Quaternion, Shape } from 'cannon-es';
-import { MeshBasicMaterial, SphereGeometry, BoxGeometry, PlaneGeometry, Mesh, CylinderGeometry, BufferGeometry, Float32BufferAttribute } from 'three';
+import { SphereGeometry, BoxGeometry, PlaneGeometry, Mesh, CylinderGeometry, BufferGeometry, Float32BufferAttribute, MeshBasicMaterial } from 'three';
+
+const getColorFromShape = shape => {
+  switch (shape) {
+    case Shape.types.BOX:
+    case Shape.types.CONVEXPOLYHEDRON:
+      return 0x0000ff;
+
+    case Shape.types.TRIMESH:
+    case Shape.types.HEIGHTFIELD:
+      return 0xff0000;
+
+    default:
+      return 0x00ff00;
+  }
+};
 
 function cannonDebugger(scene, bodies, {
-  color = 0x00ff00,
+  color = getColorFromShape,
   scale = 1,
   onInit,
   onUpdate,
@@ -10,10 +25,7 @@ function cannonDebugger(scene, bodies, {
 } = {}) {
   const _meshes = [];
 
-  const _material = new MeshBasicMaterial({
-    color: color != null ? color : 0x00ff00,
-    wireframe: true
-  });
+  const _materials = new Map();
 
   const _tempVec0 = new Vec3();
 
@@ -103,6 +115,22 @@ function cannonDebugger(scene, bodies, {
     return geometry;
   }
 
+  function getMaterial(shape) {
+    if (_materials.has(shape)) {
+      return _materials.get(shape);
+    }
+
+    const meshColor = typeof color === 'function' ? color(shape) : color;
+    const material = new MeshBasicMaterial({
+      color: meshColor,
+      wireframe: true
+    });
+
+    _materials.set(shape, material);
+
+    return material;
+  }
+
   function createMesh(shape) {
     let mesh = new Mesh();
     const {
@@ -118,26 +146,26 @@ function cannonDebugger(scene, bodies, {
     switch (shape.type) {
       case SPHERE:
         {
-          mesh = new Mesh(_sphereGeometry, _material);
+          mesh = new Mesh(_sphereGeometry, getMaterial(shape.type));
           break;
         }
 
       case BOX:
         {
-          mesh = new Mesh(_boxGeometry, _material);
+          mesh = new Mesh(_boxGeometry, getMaterial(shape.type));
           break;
         }
 
       case PLANE:
         {
-          mesh = new Mesh(_planeGeometry, _material);
+          mesh = new Mesh(_planeGeometry, getMaterial(shape.type));
           break;
         }
 
       case CYLINDER:
         {
           const geometry = new CylinderGeometry(shape.radiusTop, shape.radiusBottom, shape.height, shape.numSegments);
-          mesh = new Mesh(geometry, _material);
+          mesh = new Mesh(geometry, getMaterial(shape.type));
           shape.geometryId = geometry.id;
           break;
         }
@@ -145,7 +173,7 @@ function cannonDebugger(scene, bodies, {
       case CONVEXPOLYHEDRON:
         {
           const geometry = createConvexPolyhedronGeometry(shape);
-          mesh = new Mesh(geometry, _material);
+          mesh = new Mesh(geometry, getMaterial(shape.type));
           shape.geometryId = geometry.id;
           break;
         }
@@ -153,7 +181,7 @@ function cannonDebugger(scene, bodies, {
       case TRIMESH:
         {
           const geometry = createTrimeshGeometry(shape);
-          mesh = new Mesh(geometry, _material);
+          mesh = new Mesh(geometry, getMaterial(shape.type));
           shape.geometryId = geometry.id;
           break;
         }
@@ -161,7 +189,7 @@ function cannonDebugger(scene, bodies, {
       case HEIGHTFIELD:
         {
           const geometry = createHeightfieldGeometry(shape);
-          mesh = new Mesh(geometry, _material);
+          mesh = new Mesh(geometry, getMaterial(shape.type));
           shape.geometryId = geometry.id;
           break;
         }
