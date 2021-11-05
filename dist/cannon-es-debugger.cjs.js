@@ -3,13 +3,14 @@
 var cannonEs = require('cannon-es');
 var three = require('three');
 
-function cannonDebugger(scene, bodies, {
-  color = 0x00ff00,
-  scale = 1,
-  onInit,
-  onUpdate,
-  autoUpdate
-} = {}) {
+function cannonDebugger(scene, bodies, _temp) {
+  let {
+    color = 0x00ff00,
+    scale = 1,
+    onInit,
+    onUpdate,
+    autoUpdate
+  } = _temp === void 0 ? {} : _temp;
   const _meshes = [];
 
   const _material = new three.MeshBasicMaterial({

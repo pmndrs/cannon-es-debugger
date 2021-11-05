@@ -1,13 +1,14 @@
 import { Vec3, Quaternion, Shape } from 'cannon-es';
 import { MeshBasicMaterial, SphereGeometry, BoxGeometry, PlaneGeometry, Mesh, CylinderGeometry, BufferGeometry, Float32BufferAttribute } from 'three';
 
-function cannonDebugger(scene, bodies, {
-  color = 0x00ff00,
-  scale = 1,
-  onInit,
-  onUpdate,
-  autoUpdate
-} = {}) {
+function cannonDebugger(scene, bodies, _temp) {
+  let {
+    color = 0x00ff00,
+    scale = 1,
+    onInit,
+    onUpdate,
+    autoUpdate
+  } = _temp === void 0 ? {} : _temp;
   const _meshes = [];
 
   const _material = new MeshBasicMaterial({
@@ -296,4 +297,4 @@ function cannonDebugger(scene, bodies, {
   };
 }
 
-export default cannonDebugger;
+export { cannonDebugger as default };
