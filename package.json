@@ -22,7 +22,6 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "npm run typegen && rollup -c",
-    "prepare": "npm run build",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false --strict",
     "typegen": "tsc --outFile dist/cannon-es-debugger.d.ts"
   },
@@ -37,17 +36,16 @@
     }
   },
   "devDependencies": {
-    "@babel/core": "^7.16.0",
-    "@babel/preset-env": "^7.16.0",
-    "@babel/preset-typescript": "^7.16.0",
+    "@babel/core": "^7.16.5",
+    "@babel/preset-env": "^7.16.5",
+    "@babel/preset-typescript": "^7.16.5",
     "@rollup/plugin-babel": "^5.3.0",
-    "@rollup/plugin-node-resolve": "^13.0.6",
-    "cannon-es": "^0.16.0",
-    "prettier": "^2.4.1",
-    "pretty-quick": "^3.1.1",
+    "@rollup/plugin-node-resolve": "^13.1.1",
+    "cannon-es": "^0.18.0",
+    "prettier": "^2.5.1",
     "rimraf": "^3.0.2",
-    "rollup": "^2.59.0",
-    "three": "^0.125.2",
-    "typescript": "^4.4.4"
+    "rollup": "^2.62.0",
+    "three": "^0.136.0",
+    "typescript": "^4.5.4"
   }
 }
