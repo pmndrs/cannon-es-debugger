@@ -21,7 +21,7 @@ import {
   BufferGeometry,
   Float32BufferAttribute,
 } from 'three'
-import type { Body } from 'cannon-es'
+import type { Body, World } from 'cannon-es'
 import type { Scene, Color } from 'three'
 
 type ComplexShape = Shape & { geometryId?: number }
@@ -30,13 +30,12 @@ export type DebugOptions = {
   scale?: number
   onInit?: (body: Body, mesh: Mesh, shape: Shape) => void
   onUpdate?: (body: Body, mesh: Mesh, shape: Shape) => void
-  autoUpdate?: Boolean
 }
 
 export default function cannonDebugger(
   scene: Scene,
-  bodies: Body[],
-  { color = 0x00ff00, scale = 1, onInit, onUpdate, autoUpdate }: DebugOptions = {}
+  world: World,
+  { color = 0x00ff00, scale = 1, onInit, onUpdate }: DebugOptions = {}
 ) {
   const _meshes: Mesh[] = []
   const _material = new MeshBasicMaterial({ color: color ?? 0x00ff00, wireframe: true })
@@ -179,7 +178,7 @@ export default function cannonDebugger(
         break
       }
       case BOX: {
-        mesh.scale.copy(((shape as Box).halfExtents as unknown) as ThreeVector3)
+        mesh.scale.copy((shape as Box).halfExtents as unknown as ThreeVector3)
         mesh.scale.multiplyScalar(2 * scale)
         break
       }
@@ -195,7 +194,7 @@ export default function cannonDebugger(
         break
       }
       case TRIMESH: {
-        mesh.scale.copy(((shape as Trimesh).scale as unknown) as ThreeVector3).multiplyScalar(scale)
+        mesh.scale.copy((shape as Trimesh).scale as unknown as ThreeVector3).multiplyScalar(scale)
         break
       }
       case HEIGHTFIELD: {
@@ -240,7 +239,7 @@ export default function cannonDebugger(
 
     let meshIndex = 0
 
-    for (const body of bodies) {
+    for (const body of world.bodies) {
       for (let i = 0; i !== body.shapes.length; i++) {
         const shape = body.shapes[i]
         const didCreateNewMesh = updateMesh(meshIndex, shape)
@@ -255,8 +254,8 @@ export default function cannonDebugger(
           body.quaternion.mult(body.shapeOrientations[i], shapeWorldQuaternion)
 
           // Copy to meshes
-          mesh.position.copy((shapeWorldPosition as unknown) as ThreeVector3)
-          mesh.quaternion.copy((shapeWorldQuaternion as unknown) as ThreeQuaternion)
+          mesh.position.copy(shapeWorldPosition as unknown as ThreeVector3)
+          mesh.quaternion.copy(shapeWorldQuaternion as unknown as ThreeQuaternion)
 
           if (didCreateNewMesh && onInit instanceof Function) onInit(body, mesh, shape)
           if (!didCreateNewMesh && onUpdate instanceof Function) onUpdate(body, mesh, shape)
@@ -272,9 +271,7 @@ export default function cannonDebugger(
     }
 
     meshes.length = meshIndex
-    if (autoUpdate !== false) requestAnimationFrame(update)
   }
 
-  if (autoUpdate !== false) requestAnimationFrame(update)
   return { update }
 }
