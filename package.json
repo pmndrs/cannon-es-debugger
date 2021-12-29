@@ -19,6 +19,9 @@
   "module": "./dist/cannon-es-debugger.js",
   "types": "./dist/cannon-es-debugger.d.ts",
   "sideEffects": false,
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "npm run typegen && rollup -c",
