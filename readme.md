@@ -1,4 +1,6 @@
-![Demo Image](https://i.imgur.com/2Bf8KfJ.png)
+# cannon-es-debugger
+
+[![Demo Image](https://i.imgur.com/2Bf8KfJ.png)](https://pmndrs.github.io/cannon-es-debugger/)
 
 This is a debugger for use with [cannon-es](https://github.com/pmndrs/cannon-es). It was adapted from the [original cannon.js debugger](https://github.com/schteppe/cannon.js/blob/master/tools/threejs/CannonDebugRenderer.js) written by Stefan Hedman [@schteppe](https://github.com/schteppe).
 
