@@ -32,7 +32,7 @@ export type DebugOptions = {
   onUpdate?: (body: Body, mesh: Mesh, shape: Shape) => void
 }
 
-export default function cannonDebugger(
+export default function CannonDebugger(
   scene: Scene,
   world: World,
   { color = 0x00ff00, scale = 1, onInit, onUpdate }: DebugOptions = {}
@@ -46,6 +46,9 @@ export default function cannonDebugger(
   const _sphereGeometry = new SphereGeometry(1)
   const _boxGeometry = new BoxGeometry(1, 1, 1)
   const _planeGeometry = new PlaneGeometry(10, 10, 10, 10)
+
+  // Move the planeGeometry forward a little bit to prevent z-fighting
+  _planeGeometry.translate(0, 0, 0.0001)
 
   function createConvexPolyhedronGeometry(shape: ConvexPolyhedron): BufferGeometry {
     const geometry = new BufferGeometry()
