@@ -26,8 +26,8 @@
     "typegen": "tsc --outFile dist/cannon-es-debugger.d.ts"
   },
   "peerDependencies": {
-    "cannon-es": "0.x.x",
-    "three": "0.x.x",
+    "cannon-es": "0.x",
+    "three": "0.x",
     "typescript": ">=3.8"
   },
   "peerDependenciesMeta": {
@@ -41,6 +41,7 @@
     "@babel/preset-typescript": "^7.16.5",
     "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-node-resolve": "^13.1.1",
+    "@types/three": "^0.135.0",
     "cannon-es": "^0.18.0",
     "prettier": "^2.5.1",
     "rimraf": "^3.0.2",
