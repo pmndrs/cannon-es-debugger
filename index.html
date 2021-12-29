@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>cannon-es-debugger</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: Monospace;
+      }
+
+      canvas {
+        outline: none;
+      }
+
+      .page-title {
+        position: fixed;
+        top: 0.75rem;
+        left: 0;
+        right: 0;
+        text-align: center;
+        color: white;
+      }
+      .page-title span {
+        color: #99ff4e;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-title">Press the <span>d</span> key to toggle the debugger</div>
+    <script type="importmap">
+      {
+        "imports": {
+          "cannon-es": "https://unpkg.com/cannon-es@0.18.0/dist/cannon-es.js",
+          "cannon-es-debugger": "./dist/cannon-es-debugger.js",
+          "three": "https://unpkg.com/three@0.136.0/build/three.module.js",
+          "three/examples/jsm/controls/OrbitControls": "https://unpkg.com/three@0.136.0/examples/jsm/controls/OrbitControls.js"
+        }
+      }
+    </script>
+    <script type="module">
+      import * as THREE from 'three'
+      import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+      import * as CANNON from 'cannon-es'
+      import CannonDebugger from 'cannon-es-debugger'
+
+      // three.js variables
+      let camera, scene, renderer, controls
+      let material
+
+      // cannon.js variables
+      let world
+      const mass = 7
+      const timeStep = 1 / 60
+      let lastCallTime
+      let cannonDebugger
+
+      // To be kept in sync
+      const meshes = []
+      const bodies = []
+
+      initThree()
+      initCannon()
+      initCannonDebugger()
+
+      addPlane()
+      addSphere()
+      addBox()
+      addCylinder()
+      addTrimesh()
+      addHeightfield()
+
+      animate()
+
+      function initThree() {
+        // Camera
+        camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.5, 1000)
+        camera.position.set(5, 4, 5)
+
+        // Scene
+        scene = new THREE.Scene()
+        scene.fog = new THREE.Fog(0x000000, 500, 1000)
+
+        // Renderer
+        renderer = new THREE.WebGLRenderer({ antialias: true })
+        renderer.setSize(window.innerWidth, window.innerHeight)
+        renderer.setClearColor(scene.fog.color)
+
+        renderer.outputEncoding = THREE.sRGBEncoding
+
+        renderer.shadowMap.enabled = true
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap
+
+        document.body.appendChild(renderer.domElement)
+
+        // Orbit controls
+        controls = new OrbitControls(camera, renderer.domElement)
+        controls.enableDamping = true
+        controls.enablePan = false
+        controls.dampingFactor = 0.1
+        controls.minDistance = 1
+        controls.maxDistance = 50
+
+        // Generic material
+        material = new THREE.MeshStandardMaterial({ color: '#ccc' })
+
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.1)
+        scene.add(ambientLight)
+
+        const spotLight = new THREE.SpotLight(0xffffff, 0.3, 0, Math.PI / 3, 1)
+        spotLight.position.set(0, 4, 0)
+        spotLight.castShadow = true
+        scene.add(spotLight)
+
+        window.addEventListener('resize', onWindowResize)
+      }
+
+      function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight
+        camera.updateProjectionMatrix()
+        renderer.setSize(window.innerWidth, window.innerHeight)
+      }
+
+      function initCannon() {
+        // Setup world
+        world = new CANNON.World()
+        world.gravity.set(0, -9.81, 0)
+      }
+
+      function initCannonDebugger() {
+        cannonDebugger = new CannonDebugger(scene, world, {
+          onInit(body, mesh) {
+            // Toggle visibiliy on "d" press
+            document.addEventListener('keydown', (event) => {
+              if (event.key === 'd') {
+                mesh.visible = !mesh.visible
+              }
+            })
+          },
+        })
+      }
+
+      function animate() {
+        requestAnimationFrame(animate)
+
+        // Step the physics world
+        const time = performance.now() / 1000
+        if (!lastCallTime) {
+          world.step(timeStep)
+        } else {
+          const dt = time - lastCallTime
+          world.step(timeStep, dt)
+        }
+        lastCallTime = time
+
+        // Update the debugger
+        cannonDebugger.update()
+
+        // Update the visible meshes positions
+        updateMeshPositions()
+
+        controls.update()
+        renderer.render(scene, camera)
+      }
+
+      function updateMeshPositions() {
+        for (let i = 0; i < meshes.length; i++) {
+          meshes[i].position.copy(bodies[i].position)
+          meshes[i].quaternion.copy(bodies[i].quaternion)
+        }
+      }
+
+      function addPlane() {
+        // Physics
+        const shape = new CANNON.Plane()
+        const body = new CANNON.Body({ mass: 0 })
+        body.addShape(shape)
+        body.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
+        world.addBody(body)
+        bodies.push(body)
+
+        // Graphics
+        const geometry = new THREE.PlaneGeometry(100, 100, 1, 1)
+        const material = new THREE.MeshStandardMaterial({ color: '#060606' })
+        const mesh = new THREE.Mesh(geometry, material)
+        // position and quaternion of the mesh are set by updateMeshPositions...
+        mesh.castShadow = true
+        mesh.receiveShadow = true
+        scene.add(mesh)
+        meshes.push(mesh)
+      }
+
+      function addBox() {
+        const size = 1
+
+        // Physics
+        const halfExtents = new CANNON.Vec3(size * 0.5, size * 0.5, size * 0.5)
+        const shape = new CANNON.Box(halfExtents)
+        const body = new CANNON.Body({ mass })
+        body.addShape(shape)
+        body.position.set(2, 2, 0.5)
+        world.addBody(body)
+        bodies.push(body)
+
+        // Graphics
+        const geometry = new THREE.BoxGeometry(size, size, size)
+        const mesh = new THREE.Mesh(geometry, material)
+        // position and quaternion of the mesh are set by updateMeshPositions...
+        mesh.castShadow = true
+        mesh.receiveShadow = true
+        scene.add(mesh)
+        meshes.push(mesh)
+      }
+
+      function addSphere() {
+        const size = 0.5
+
+        // Physics
+        const body = new CANNON.Body({ mass })
+        const shape = new CANNON.Sphere(size)
+        body.addShape(shape)
+        body.position.set(-0.5, 2, -1)
+        world.addBody(body)
+        bodies.push(body)
+
+        // Graphics
+        const geometry = new THREE.SphereGeometry(size)
+        const mesh = new THREE.Mesh(geometry, material)
+        // position and quaternion of the mesh are set by updateMeshPositions...
+        mesh.castShadow = true
+        mesh.receiveShadow = true
+        scene.add(mesh)
+        meshes.push(mesh)
+      }
+
+      function addCylinder() {
+        const size = 1
+        const radialSegments = 15
+
+        // Physics
+        const body = new CANNON.Body({ mass })
+        const shape = new CANNON.Cylinder(size * 0.5, size * 0.5, size, radialSegments)
+        body.addShape(shape)
+        body.position.set(0, 2, 1.5)
+        world.addBody(body)
+        bodies.push(body)
+
+        // Graphics
+        const geometry = new THREE.CylinderGeometry(size * 0.5, size * 0.5, size, radialSegments)
+        const mesh = new THREE.Mesh(geometry, material)
+        // position and quaternion of the mesh are set by updateMeshPositions...
+        mesh.castShadow = true
+        mesh.receiveShadow = true
+        scene.add(mesh)
+        meshes.push(mesh)
+      }
+
+      function addTrimesh() {
+        const radius = 1
+        const tube = 0.3
+        const radialSegments = 16
+
+        // Physics
+        const body = new CANNON.Body({ mass })
+        const shape = CANNON.Trimesh.createTorus(radius, tube, radialSegments, 16)
+        body.addShape(shape)
+        body.position.set(-3, 2, -1)
+        body.quaternion.setFromEuler(Math.PI * 0.1, 0, 0)
+        world.addBody(body)
+        bodies.push(body)
+
+        // Graphics
+        const geometry = new THREE.TorusGeometry(radius, tube, radialSegments, 100)
+        const mesh = new THREE.Mesh(geometry, material)
+        // position and quaternion of the mesh are set by updateMeshPositions...
+        mesh.castShadow = true
+        mesh.receiveShadow = true
+        scene.add(mesh)
+        meshes.push(mesh)
+      }
+
+      function addHeightfield() {
+        const sizeX = 20 // number of vertices in the X axis
+        const sizeY = 20 // number of vertices in the Y axis
+        const elementSize = 0.3 // cell width
+        const depth = 0.6
+
+        // Physics
+        const body = new CANNON.Body({ mass: 0 })
+        const matrix = []
+        for (let i = 0; i < sizeX; i++) {
+          matrix.push([])
+          for (let j = 0; j < sizeY; j++) {
+            const height = Math.cos((i / (sizeX - 1)) * Math.PI * 2) * Math.cos((j / (sizeY - 1)) * Math.PI * 2) * depth
+            matrix[i].push(height)
+          }
+        }
+        const shape = new CANNON.Heightfield(matrix, { elementSize })
+        body.addShape(shape, new CANNON.Vec3((-(sizeX - 1) / 2) * elementSize, (-(sizeY - 1) / 2) * elementSize, 0))
+        body.position.set(0, depth, -6)
+        body.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
+        world.addBody(body)
+        bodies.push(body)
+
+        // Graphics
+        const geometry = new THREE.PlaneGeometry(
+          (sizeX - 1) * elementSize,
+          (sizeY - 1) * elementSize,
+          sizeX - 1,
+          sizeY - 1
+        )
+        for (let i = 0; i < sizeX; i++) {
+          for (let j = 0; j < sizeY; j++) {
+            const height = Math.cos((i / (sizeX - 1)) * Math.PI * 2) * Math.cos((j / (sizeY - 1)) * Math.PI * 2) * depth
+
+            geometry.attributes.position.setZ(i * sizeX + j, height)
+          }
+        }
+        geometry.computeBoundingSphere()
+        geometry.computeVertexNormals()
+        const mesh = new THREE.Mesh(geometry, material)
+        // position and quaternion of the mesh are set by updateMeshPositions...
+        mesh.castShadow = true
+        mesh.receiveShadow = true
+        scene.add(mesh)
+        meshes.push(mesh)
+      }
+    </script>
+  </body>
+</html>
