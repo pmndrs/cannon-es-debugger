@@ -3,13 +3,12 @@
 var cannonEs = require('cannon-es');
 var three = require('three');
 
-function cannonDebugger(scene, bodies, _temp) {
+function CannonDebugger(scene, world, _temp) {
   let {
     color = 0x00ff00,
     scale = 1,
     onInit,
-    onUpdate,
-    autoUpdate
+    onUpdate
   } = _temp === void 0 ? {} : _temp;
   const _meshes = [];
 
@@ -30,7 +29,10 @@ function cannonDebugger(scene, bodies, _temp) {
 
   const _boxGeometry = new three.BoxGeometry(1, 1, 1);
 
-  const _planeGeometry = new three.PlaneGeometry(10, 10, 10, 10);
+  const _planeGeometry = new three.PlaneGeometry(10, 10, 10, 10); // Move the planeGeometry forward a little bit to prevent z-fighting
+
+
+  _planeGeometry.translate(0, 0, 0.0001);
 
   function createConvexPolyhedronGeometry(shape) {
     const geometry = new three.BufferGeometry(); // Add vertices
@@ -261,7 +263,7 @@ function cannonDebugger(scene, bodies, _temp) {
     const shapeWorldQuaternion = _tempQuat0;
     let meshIndex = 0;
 
-    for (const body of bodies) {
+    for (const body of world.bodies) {
       for (let i = 0; i !== body.shapes.length; i++) {
         const shape = body.shapes[i];
         const didCreateNewMesh = updateMesh(meshIndex, shape);
@@ -290,13 +292,11 @@ function cannonDebugger(scene, bodies, _temp) {
     }
 
     meshes.length = meshIndex;
-    if (autoUpdate !== false) requestAnimationFrame(update);
   }
 
-  if (autoUpdate !== false) requestAnimationFrame(update);
   return {
     update
   };
 }
 
-module.exports = cannonDebugger;
+module.exports = CannonDebugger;

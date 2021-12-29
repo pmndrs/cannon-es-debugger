@@ -1,13 +1,12 @@
 import { Vec3, Quaternion, Shape } from 'cannon-es';
 import { MeshBasicMaterial, SphereGeometry, BoxGeometry, PlaneGeometry, Mesh, CylinderGeometry, BufferGeometry, Float32BufferAttribute } from 'three';
 
-function cannonDebugger(scene, bodies, _temp) {
+function CannonDebugger(scene, world, _temp) {
   let {
     color = 0x00ff00,
     scale = 1,
     onInit,
-    onUpdate,
-    autoUpdate
+    onUpdate
   } = _temp === void 0 ? {} : _temp;
   const _meshes = [];
 
@@ -28,7 +27,10 @@ function cannonDebugger(scene, bodies, _temp) {
 
   const _boxGeometry = new BoxGeometry(1, 1, 1);
 
-  const _planeGeometry = new PlaneGeometry(10, 10, 10, 10);
+  const _planeGeometry = new PlaneGeometry(10, 10, 10, 10); // Move the planeGeometry forward a little bit to prevent z-fighting
+
+
+  _planeGeometry.translate(0, 0, 0.0001);
 
   function createConvexPolyhedronGeometry(shape) {
     const geometry = new BufferGeometry(); // Add vertices
@@ -259,7 +261,7 @@ function cannonDebugger(scene, bodies, _temp) {
     const shapeWorldQuaternion = _tempQuat0;
     let meshIndex = 0;
 
-    for (const body of bodies) {
+    for (const body of world.bodies) {
       for (let i = 0; i !== body.shapes.length; i++) {
         const shape = body.shapes[i];
         const didCreateNewMesh = updateMesh(meshIndex, shape);
@@ -288,13 +290,11 @@ function cannonDebugger(scene, bodies, _temp) {
     }
 
     meshes.length = meshIndex;
-    if (autoUpdate !== false) requestAnimationFrame(update);
   }
 
-  if (autoUpdate !== false) requestAnimationFrame(update);
   return {
     update
   };
 }
 
-export { cannonDebugger as default };
+export { CannonDebugger as default };
