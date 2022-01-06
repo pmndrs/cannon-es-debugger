@@ -78,3 +78,11 @@ The available properties of the `options` object are:
 - **`onUpdate`** - callback function that runs on every subsequent animation frame
 
 The `update()` method needs to be called in a `requestAnimationFrame` loop to keep updating the wireframe meshes after the bodies have been updated.
+
+### EXAMPLE
+
+You can run an example by serving the `index`. An easy way to do this is with [serve](https://github.com/vercel/serve).
+
+```js
+npx serve
+```
