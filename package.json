@@ -23,6 +23,7 @@
     "dist"
   ],
   "scripts": {
+    "start": "serve",
     "prebuild": "rimraf dist",
     "build": "npm run typegen && rollup -c",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false --strict",
@@ -49,6 +50,7 @@
     "prettier": "^2.5.1",
     "rimraf": "^3.0.2",
     "rollup": "^2.62.0",
+    "serve": "^13.0.2",
     "three": "^0.136.0",
     "typescript": "^4.5.4"
   }
