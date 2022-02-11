@@ -64,10 +64,8 @@ type DebugOptions = {
   onUpdate?: (body: Body, mesh: Mesh, shape: Shape) => void
 }
 
-export default class CannonDebugger {
-  constructor(scene: Scene, world: World, options: DebugOptions): void
-
-  update(): void
+export default function CannonDebugger(scene: Scene, world: World, options?: DebugOptions): {
+  update: () => void;
 }
 ```
 
