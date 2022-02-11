@@ -11,5 +11,6 @@ declare module "cannon-es-debugger" {
     };
     export default function CannonDebugger(scene: Scene, world: World, { color, scale, onInit, onUpdate }?: DebugOptions): {
         update: () => void;
+        toggle: (value?: boolean | undefined) => void;
     };
 }
