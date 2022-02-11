@@ -64,10 +64,9 @@ type DebugOptions = {
   onUpdate?: (body: Body, mesh: Mesh, shape: Shape) => void
 }
 
-export default class CannonDebugger {
-  constructor(scene: Scene, world: World, options: DebugOptions): void
-
-  update(): void
+export default function CannonDebugger(scene: Scene, world: World, options?: DebugOptions): {
+  update: () => void;
+  toggle: (value?: boolean | undefined) => void;
 }
 ```
 
@@ -82,3 +81,5 @@ The available properties of the `options` object are:
 - **`onUpdate`** - callback function that runs on every subsequent animation frame
 
 The `update()` method needs to be called in a `requestAnimationFrame` loop to keep updating the wireframe meshes after the bodies have been updated.
+
+The `toggle` method can be called to turn toggle the debugger on or off. Will invert the current value by default.

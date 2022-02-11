@@ -8,6 +8,7 @@ function CannonDebugger(scene, world, _temp) {
     onInit,
     onUpdate
   } = _temp === void 0 ? {} : _temp;
+  let _enabled = true;
   const _meshes = [];
 
   const _material = new MeshBasicMaterial({
@@ -256,6 +257,7 @@ function CannonDebugger(scene, world, _temp) {
   }
 
   function update() {
+    if (!_enabled) return;
     const meshes = _meshes;
     const shapeWorldPosition = _tempVec0;
     const shapeWorldQuaternion = _tempQuat0;
@@ -292,8 +294,45 @@ function CannonDebugger(scene, world, _temp) {
     meshes.length = meshIndex;
   }
 
+  function toggle(value) {
+    const enabled = value !== null && value !== undefined ? !!value : !_enabled;
+
+    if (enabled) {
+      enable();
+    } else {
+      disable();
+    }
+  }
+
+  function enable() {
+    _enabled = true;
+    const meshes = _meshes;
+
+    for (let i = 0; i < meshes.length; i++) {
+      const mesh = meshes[i];
+
+      if (mesh) {
+        scene.add(mesh);
+      }
+    }
+  }
+
+  function disable() {
+    _enabled = false;
+    const meshes = _meshes;
+
+    for (let i = 0; i < meshes.length; i++) {
+      const mesh = meshes[i];
+
+      if (mesh) {
+        scene.remove(mesh);
+      }
+    }
+  }
+
   return {
-    update
+    update,
+    toggle
   };
 }
 
