@@ -37,6 +37,7 @@ export default function CannonDebugger(
   world: World,
   { color = 0x00ff00, scale = 1, onInit, onUpdate }: DebugOptions = {}
 ) {
+  let _enabled = true;
   const _meshes: Mesh[] = []
   const _material = new MeshBasicMaterial({ color: color ?? 0x00ff00, wireframe: true })
   const _tempVec0 = new CannonVector3()
@@ -236,6 +237,8 @@ export default function CannonDebugger(
   }
 
   function update(): void {
+    if (!_enabled) return;
+    
     const meshes = _meshes
     const shapeWorldPosition = _tempVec0
     const shapeWorldQuaternion = _tempQuat0
@@ -276,5 +279,42 @@ export default function CannonDebugger(
     meshes.length = meshIndex
   }
 
-  return { update }
+  function toggle(value?: boolean): void {
+    const enabled = (value !== null && value !== undefined) ? !!value : !_enabled;
+
+    if (enabled) {
+      enable();
+    } else {
+      disable();
+    }
+  }
+
+  function enable(): void {
+    _enabled = true;
+
+    const meshes = _meshes;
+    for (let i = 0; i < meshes.length; i++) {
+      const mesh = meshes[i];
+      if (mesh) {
+        scene.add(mesh);
+      }
+    }
+  }
+
+  function disable(): void {
+    _enabled = false;
+
+    const meshes = _meshes;
+    for (let i = 0; i < meshes.length; i++) {
+      const mesh = meshes[i];
+      if (mesh) {
+        scene.remove(mesh);
+      }
+    }
+  }
+
+  return { 
+    update,
+    toggle
+  }
 }
